@@ -4,7 +4,11 @@ import Cookies from "js-cookie";
 
 type AlertType = "success" | "error" | "warning" | "info";
 
-export default function ModalCreateTask() {
+interface ModalCreateTaskProps {
+   onTaskCreated: () => void;
+}
+
+export default function ModalCreateTask(props: ModalCreateTaskProps) {
    const [title, setTitle] = useState("");
    const [description, setDescription] = useState("");
    const [priority, setPriority] = useState("Baixa");
@@ -23,7 +27,6 @@ export default function ModalCreateTask() {
          return;
       }
 
-      // Enviar a requisição para criar a tarefa
       fetch("http://localhost:8086/task", {
          method: "POST",
          headers: {
@@ -49,7 +52,7 @@ export default function ModalCreateTask() {
             setAlertType("success");
             setAlertMessage("Tarefa criada com sucesso!");
             setShowAlert(true);
-            console.log(data);
+            props.onTaskCreated();
          })
          .catch((error) => {
             console.error("Erro:", error);

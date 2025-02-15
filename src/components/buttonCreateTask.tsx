@@ -2,7 +2,11 @@ import { Plus, X } from "lucide-react";
 import { useState } from "react";
 import ModalCreateTask from "./modalCreateTask";
 
-export default function CreateTask() {
+interface CreateProps {
+   onTaskCreated: () => void;
+}
+
+export default function CreateTask(props: CreateProps) {
    const [isVisibleCreateModal, setIsVisibleCreateModal] = useState(false);
 
    const handleVisibleCreateModal = () => {
@@ -21,7 +25,9 @@ export default function CreateTask() {
                <X className="w-8 h-8" />
             )}
          </button>
-         {isVisibleCreateModal && <ModalCreateTask />}
+         {isVisibleCreateModal && (
+            <ModalCreateTask onTaskCreated={props.onTaskCreated} />
+         )}
       </>
    );
 }
