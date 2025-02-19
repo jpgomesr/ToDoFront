@@ -7,23 +7,27 @@ import Alert from "@/components/alert";
 
 type AlertType = "success" | "error" | "warning" | "info";
 
-export default function login() {
+export default function Login() {
    const [email, setEmail] = useState("");
    const [password, setPassword] = useState("");
-
-   const router = useRouter();
-
    const [showAlert, setShowAlert] = useState(false);
    const [alertType, setAlertType] = useState<AlertType>("success");
    const [alertMessage, setAlertMessage] = useState("");
 
-   useEffect(() => {
-      const loginButton = document.getElementById("loginButton");
+   const router = useRouter();
 
-      const handleLogin = (e: any) => {
-         e.preventDefault();
+   const handleLogin = async (e: Event) => {
+      e.preventDefault();
 
-         fetch("http://localhost:8086/user/login", {
+      if (email.trim() === "" || password.trim() === "") {
+         setAlertType("error");
+         setAlertMessage("Preencha todos os campos.");
+         setShowAlert(true);
+         return;
+      }
+
+      try {
+         const response = await fetch("http://localhost:8086/user/login", {
             method: "POST",
             headers: {
                "Content-Type": "application/json",
@@ -32,96 +36,87 @@ export default function login() {
                email: email,
                senha: password,
             }),
-         })
-            .then((response) => {
-               if (!response.ok) {
-                  setAlertType("error");
-                  setAlertMessage(
-                     "Erro ao fazer login. Verifique suas credenciais."
-                  );
-                  setShowAlert(true);
-                  throw new Error("Credenciais inválidas");
-               }
-               return response.json();
-            })
-            .then((data) => {
-               console.log(data);
-               const userId = data.userId;
-               Cookies.set("user_id", userId);
-               router.push("/");
-            })
-            .catch((error) => {
-               console.error("Erro:", error.message);
-            });
-      };
+         });
+
+         if (!response.ok) {
+            setAlertType("error");
+            setAlertMessage("Erro ao fazer login. Verifique suas credenciais.");
+            setShowAlert(true);
+            throw new Error("Credenciais inválidas");
+         }
+
+         const data = await response.json();
+         const userId = data.userId;
+
+         if (userId) {
+            Cookies.set("user_id", userId);
+            router.push("/");
+         } else {
+            setAlertType("error");
+            setAlertMessage("Erro ao obter o ID do usuário.");
+            setShowAlert(true);
+         }
+      } catch (error) {
+         console.error("Erro:", error);
+      }
+   };
+
+   useEffect(() => {
+      const loginButton = document.getElementById("loginButton");
 
       if (loginButton) {
-         loginButton.addEventListener("click", handleLogin);
+         loginButton.addEventListener("click", handleLogin as EventListener);
 
          return () => {
-            loginButton.removeEventListener("click", handleLogin);
+            loginButton.removeEventListener(
+               "click",
+               handleLogin as EventListener
+            );
          };
       }
-   }, [email, password]);
+   }, [handleLogin]);
 
    return (
-      <div className="w-screen h-screen flex justify-center items-center bg-gradient-to-r from-blue-400 to-green-500">
-         <div className="w-[40%] h-[70%] bg-white rounded-lg shadow-2xl flex justify-center items-center">
-            <form action="login" className="flex flex-col gap-6 w-3/4">
-               <div className="flex flex-col gap-2">
-                  <label htmlFor="email" className="text-gray-700 font-medium">
-                     Email
-                  </label>
-                  <input
-                     type="text"
-                     placeholder="Digite seu email"
-                     className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                     value={email}
-                     onChange={(e) => setEmail(e.target.value)}
+      <div className="flex justify-center items-center h-screen bg-gray-900">
+         <div className="bg-gray-800 p-8 rounded-lg shadow-md w-96">
+            <form className="space-y-4">
+               <input
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full p-2 border border-gray-700 rounded bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+               />
+               <input
+                  type="password"
+                  placeholder="Senha"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full p-2 border border-gray-700 rounded bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+               />
+               {showAlert && (
+                  <Alert
+                     type={alertType}
+                     message={alertMessage}
+                     onClose={() => setShowAlert(false)}
                   />
-               </div>
-               <div className="flex flex-col gap-2">
-                  <label
-                     htmlFor="password"
-                     className="text-gray-700 font-medium"
-                  >
-                     Senha
-                  </label>
-                  <input
-                     type="password"
-                     placeholder="Digite sua senha"
-                     className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                     value={password}
-                     onChange={(e) => setPassword(e.target.value)}
-                  />
-               </div>
-               <div className="flex justify-center">
-                  <button
-                     type="submit"
-                     className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition duration-300"
-                     id="loginButton"
-                  >
-                     Entrar
-                  </button>
-               </div>
-               <div className="flex justify-center">
-                  <button
-                     type="button"
-                     onClick={() => router.push("/register")}
-                     className="text-blue-500 hover:text-blue-600 transition duration-300"
-                  >
-                     Não possuo conta
-                  </button>
-               </div>
+               )}
+               <button
+                  id="loginButton"
+                  type="button"
+                  className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300"
+               >
+                  Entrar
+               </button>
+               <button
+                  type="button"
+                  onClick={() => router.push("/register")}
+                  className="w-full text-blue-400 hover:text-blue-300 transition duration-300"
+               >
+                  Não possuo conta
+               </button>
             </form>
          </div>
-         {showAlert && (
-            <Alert
-               type={alertType}
-               message={alertMessage}
-               onClose={() => setShowAlert(false)}
-            />
-         )}
       </div>
    );
 }

@@ -16,13 +16,13 @@ export default function CreateTask(props: CreateProps) {
    return (
       <>
          <button
-            className="absolute w-14 h-14 bg-blue-300 top-[88vh] flex items-center justify-center left-4 rounded-full"
+            className="absolute w-14 h-14 bg-gray-700 top-[88vh] flex items-center justify-center left-4 rounded-full"
             onClick={handleVisibleCreateModal}
          >
             {!isVisibleCreateModal ? (
-               <Plus className="w-8 h-8" />
+               <Plus className="w-8 h-8 text-white" />
             ) : (
-               <X className="w-8 h-8" />
+               <X className="w-8 h-8 text-white" />
             )}
          </button>
          {isVisibleCreateModal && (

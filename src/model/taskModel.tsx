@@ -1,8 +1,4 @@
-enum Priority {
-   "Baixa",
-   "Media",
-   "Alta",
-}
+import { Priority } from "./priority";
 
 export default class taskModel {
    id: string;

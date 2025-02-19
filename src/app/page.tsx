@@ -65,34 +65,34 @@ export default function Home() {
    }
 
    return (
-      <>
-         <header className="py-4 px-16 flex flex-row justify-between items-center bg-gradient-to-r from-blue-400 to-green-500">
+      <div className="min-h-screen bg-gray-900">
+         <header className="py-4 px-16 flex flex-row justify-between items-center bg-gray-800">
             <div>
-               <p className="text-2xl font-bold">To Do List</p>
+               <p className="text-2xl font-bold text-white">To Do List</p>
             </div>
-            <div className="flex flex-row gap-4 bg-white py-2 px-4 items-center rounded-lg">
-               <Search />
+            <div className="flex flex-row gap-4 bg-gray-700 py-2 px-4 items-center rounded-lg">
+               <Search className="text-gray-400" />
                <input
                   type="text"
-                  className="h-7 w-80 px-2 focus:outline-none text-lg"
+                  className="h-7 w-80 px-2 focus:outline-none text-lg bg-transparent text-white placeholder-gray-400"
                   placeholder="Digite sua pesquisa aqui"
                />
             </div>
             <div className="flex gap-10 items-center">
                <button>
-                  <User className="w-12 h-12" />
+                  <User className="w-12 h-12 text-white" />
                </button>
                <button onClick={handleExit}>
-                  <LogOut className="w-10 h-10" />
+                  <LogOut className="w-10 h-10 text-white" />
                </button>
             </div>
          </header>
-         <div className="px-32 py-16">
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-8 py-8">
             {tasks.map((task) => (
                <Task key={task.id} task={task} onTaskDeleted={fetchTasks} />
             ))}
          </div>
          <CreateTask onTaskCreated={fetchTasks} />
-      </>
+      </div>
    );
 }

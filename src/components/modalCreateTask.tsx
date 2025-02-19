@@ -61,34 +61,37 @@ export default function ModalCreateTask(props: ModalCreateTaskProps) {
 
    return (
       <>
-         <div className="w-[30vw] h-[80vh] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-blue-400 to-green-500 rounded-xl">
+         <div className="w-[30vw] h-[80vh] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-800 rounded-xl border border-gray-700">
             <form
                action="createTask"
                className="w-full h-full flex flex-col px-6 py-6 gap-6 justify-between"
             >
-               <h3 className="font-bold text-2xl w-full text-center">
+               <h3 className="font-bold text-2xl w-full text-center text-white">
                   Criar Tarefa
                </h3>
                <div className="flex flex-col gap-2">
-                  <label htmlFor="title" className="px-2 text-lg">
-                     Titulo
+                  <label htmlFor="title" className="px-2 text-lg text-white">
+                     Título
                   </label>
                   <input
                      type="text"
-                     placeholder="Digite o titulo"
-                     className="px-3 py-1 focus:outline-none rounded-md"
+                     placeholder="Digite o título"
+                     className="px-3 py-2 focus:outline-none rounded-md bg-gray-700 text-white placeholder-gray-400"
                      maxLength={30}
                      value={title}
                      onChange={(e) => setTitle(e.target.value)}
                   />
                </div>
                <div className="flex flex-col gap-2">
-                  <label htmlFor="title" className="px-2 text-lg">
+                  <label
+                     htmlFor="description"
+                     className="px-2 text-lg text-white"
+                  >
                      Descrição
                   </label>
                   <textarea
                      placeholder="Digite a descrição"
-                     className="px-3 py-1 focus:outline-none rounded-md w-full h-20 resize-none"
+                     className="px-3 py-2 focus:outline-none rounded-md w-full h-20 resize-none bg-gray-700 text-white placeholder-gray-400"
                      maxLength={150}
                      value={description}
                      onChange={(e) => setDescription(e.target.value)}
@@ -97,11 +100,11 @@ export default function ModalCreateTask(props: ModalCreateTaskProps) {
                <div className="flex justify-center items-center flex-col gap-2">
                   <label
                      htmlFor="priority"
-                     className="w-full text-left px-2 text-lg"
+                     className="w-full text-left px-2 text-lg text-white"
                   >
                      Prioridade
                   </label>
-                  <div className="flex flex-wrap rounded-lg bg-gray-200 shadow-md p-1 w-full font-sm gap-2">
+                  <div className="flex flex-wrap rounded-lg bg-gray-700 shadow-md p-1 w-full font-sm gap-2">
                      <label className="flex-1 text-center cursor-pointer">
                         <input
                            type="radio"
@@ -111,7 +114,7 @@ export default function ModalCreateTask(props: ModalCreateTaskProps) {
                            className="hidden peer"
                            onChange={(e) => setPriority(e.target.value)}
                         />
-                        <span className="flex items-center justify-center py-2 px-4 rounded-md text-gray-700 transition-all duration-150 ease-in-out peer-checked:bg-white peer-checked:font-semibold hover:bg-gray-300">
+                        <span className="flex items-center justify-center py-2 px-4 rounded-md text-gray-300 transition-all duration-150 ease-in-out peer-checked:bg-gray-600 peer-checked:text-white hover:bg-gray-600">
                            Baixa
                         </span>
                      </label>
@@ -123,7 +126,7 @@ export default function ModalCreateTask(props: ModalCreateTaskProps) {
                            className="hidden peer"
                            onChange={(e) => setPriority(e.target.value)}
                         />
-                        <span className="flex items-center justify-center py-2 px-4 rounded-md text-gray-700 transition-all duration-150 ease-in-out peer-checked:bg-white peer-checked:font-semibold hover:bg-gray-300">
+                        <span className="flex items-center justify-center py-2 px-4 rounded-md text-gray-300 transition-all duration-150 ease-in-out peer-checked:bg-gray-600 peer-checked:text-white hover:bg-gray-600">
                            Média
                         </span>
                      </label>
@@ -135,7 +138,7 @@ export default function ModalCreateTask(props: ModalCreateTaskProps) {
                            className="hidden peer"
                            onChange={(e) => setPriority(e.target.value)}
                         />
-                        <span className="flex items-center justify-center py-2 px-4 rounded-md text-gray-700 transition-all duration-150 ease-in-out peer-checked:bg-white peer-checked:font-semibold hover:bg-gray-300">
+                        <span className="flex items-center justify-center py-2 px-4 rounded-md text-gray-300 transition-all duration-150 ease-in-out peer-checked:bg-gray-600 peer-checked:text-white hover:bg-gray-600">
                            Alta
                         </span>
                      </label>
@@ -144,7 +147,7 @@ export default function ModalCreateTask(props: ModalCreateTaskProps) {
                <div className="flex justify-center">
                   <button
                      type="submit"
-                     className="bg-white px-4 py-2 rounded-lg hover:bg-green-200 transition-all duration-150 ease-in-out"
+                     className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-all duration-150 ease-in-out"
                      id="createTask"
                      onClick={handleCreate}
                   >
