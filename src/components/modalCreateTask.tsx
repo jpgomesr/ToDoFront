@@ -6,6 +6,7 @@ type AlertType = "success" | "error" | "warning" | "info";
 
 interface ModalCreateTaskProps {
    onTaskCreated: () => void;
+   changeVisibility: () => void;
 }
 
 export default function ModalCreateTask(props: ModalCreateTaskProps) {
@@ -59,9 +60,18 @@ export default function ModalCreateTask(props: ModalCreateTaskProps) {
          });
    };
 
+   const handleCreateTaskButton = (e: any) => {
+      handleCreate(e);
+      props.changeVisibility();
+   };
+
    return (
       <>
-         <div className="w-[30vw] h-[80vh] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-800 rounded-xl border border-gray-700">
+         <div
+            className="fixed inset-0 bg-black/50"
+            onClick={props.changeVisibility}
+         />
+         <div className="w-[30vw] h-[80vh] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-800 rounded-xl border border-gray-700 z-50">
             <form
                action="createTask"
                className="w-full h-full flex flex-col px-6 py-6 gap-6 justify-between"
@@ -149,7 +159,7 @@ export default function ModalCreateTask(props: ModalCreateTaskProps) {
                      type="submit"
                      className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-all duration-150 ease-in-out"
                      id="createTask"
-                     onClick={handleCreate}
+                     onClick={handleCreateTaskButton}
                   >
                      Criar
                   </button>

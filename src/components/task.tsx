@@ -3,6 +3,7 @@ import Status from "@/components/status";
 import { Info, Trash, ArrowDown, Equal, ArrowUp } from "lucide-react";
 import { useState } from "react";
 import { Priority } from "@/model/priority";
+import ModalTask from "@/components/modalTask";
 
 interface TaskProps {
    task: taskModel;
@@ -11,6 +12,7 @@ interface TaskProps {
 
 export default function Task(props: TaskProps) {
    const [taskStatus, setTaskStatus] = useState(props.task.status);
+   const [isModalVisible, setIsModalVisible] = useState(false);
 
    const handleDeleteTask = async () => {
       await fetch(`http://localhost:8086/task/${props.task.id}`, {
@@ -22,6 +24,10 @@ export default function Task(props: TaskProps) {
 
    const handleStatusChange = (newStatus: boolean) => {
       setTaskStatus(newStatus);
+   };
+
+   const handleShowModal = () => {
+      setIsModalVisible(!isModalVisible);
    };
 
    const getPriorityStyles = (priority: Priority) => {
@@ -79,6 +85,7 @@ export default function Task(props: TaskProps) {
                   taskId={props.task.id}
                   status={taskStatus}
                   onStatusChange={handleStatusChange}
+                  textSize="text-xs"
                />
                <div
                   className={`flex items-center gap-1 ${priorityStyles.color}`}
@@ -89,7 +96,10 @@ export default function Task(props: TaskProps) {
             </div>
          </div>
          <div className="flex gap-2">
-            <button className="mt-2 bg-blue-400 hover:bg-blue-500 w-8 h-8 flex justify-center items-center rounded-full transition-all duration-200">
+            <button
+               className="mt-2 bg-blue-400 hover:bg-blue-500 w-8 h-8 flex justify-center items-center rounded-full transition-all duration-200"
+               onClick={handleShowModal}
+            >
                <Info className="text-black w-5 h-5" />
             </button>
             <button
@@ -99,6 +109,16 @@ export default function Task(props: TaskProps) {
                <Trash className="text-white w-4 h-4" />
             </button>
          </div>
+         {isModalVisible && (
+            <ModalTask
+               task={props.task}
+               deleteTask={handleDeleteTask}
+               taskId={props.task.id}
+               status={taskStatus}
+               onStatusChange={handleStatusChange}
+               closeModal={handleShowModal}
+            />
+         )}
       </div>
    );
 }

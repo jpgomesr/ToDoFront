@@ -2,12 +2,14 @@ interface StatusProps {
    taskId: string;
    status: boolean;
    onStatusChange: (newStatus: boolean) => void;
+   textSize: string;
 }
 
 export default function Status({
    taskId,
    status,
    onStatusChange,
+   textSize,
 }: StatusProps) {
    const color = status ? "#8fff87" : "#fffb87";
    const text = status ? "Finalizado" : "Em andamento";
@@ -42,7 +44,7 @@ export default function Status({
          style={{ backgroundColor: `${color}` }}
          onClick={toggleStatus}
       >
-         <p className="text-xs px-2 py-1 font-bold">{text}</p>
+         <p className={`${textSize} px-2 py-1 font-bold`}>{text}</p>
       </button>
    );
 }
