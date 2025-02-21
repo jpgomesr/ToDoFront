@@ -8,6 +8,7 @@ import CreateTask from "@/components/buttonCreateTask";
 import Task from "@/components/task";
 import taskModel from "@/model/taskModel";
 import Header from "@/components/header";
+import Profile from "@/components/profile";
 
 export default function Home() {
    const router = useRouter();
@@ -16,6 +17,7 @@ export default function Home() {
    const [isLoading, setIsLoading] = useState(true);
    const [tasks, setTasks] = useState<taskModel[]>([]);
    const [search, setSearch] = useState("");
+   const [isProfileVisible, setIsProfileVisible] = useState(false);
 
    useEffect(() => {
       setIsClient(true);
@@ -87,6 +89,10 @@ export default function Home() {
       setSearch(e.target.value);
    };
 
+   const handleProfileVisible = () => {
+      setIsProfileVisible(!isProfileVisible);
+   }
+
    const filteredTasks = tasks.filter((task) => {
       return (
          task.titulo.toLowerCase().includes(search) ||
@@ -100,13 +106,14 @@ export default function Home() {
 
    return (
       <div className="min-h-screen bg-gray-900">
-         <Header setSearch={handleSearch} search={search} />
+         <Header setSearch={handleSearch} search={search} profile={handleProfileVisible} />
          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-8 py-8">
             {filteredTasks.map((task) => (
                <Task key={task.id} task={task} onTaskDeleted={fetchTasks} />
             ))}
          </div>
          <CreateTask onTaskCreated={fetchTasks} />
+         {isProfileVisible && <Profile changeVisibility={handleProfileVisible} />}
       </div>
    );
 }

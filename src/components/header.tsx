@@ -4,8 +4,9 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 
 interface HeaderProps {
-   setSearch?: () => void;
+   setSearch?: (e: any) => void;
    search?: string;
+   profile?: () => void;
 }
 
 const header = (props: HeaderProps) => {
@@ -32,7 +33,7 @@ const header = (props: HeaderProps) => {
             />
          </div>
          <div className="flex gap-10 items-center">
-            <button>
+            <button onClick={props.profile}>
                <User className="w-8 h-8 text-white" />
             </button>
             <button onClick={handleExit}>
