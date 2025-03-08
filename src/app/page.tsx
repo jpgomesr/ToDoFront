@@ -12,12 +12,14 @@ import Profile from "@/components/profile";
 
 export default function Home() {
    const router = useRouter();
+
    const [userId, setUserId] = useState<string | null>(null);
    const [isClient, setIsClient] = useState(false);
    const [isLoading, setIsLoading] = useState(true);
    const [tasks, setTasks] = useState<taskModel[]>([]);
    const [search, setSearch] = useState("");
    const [isProfileVisible, setIsProfileVisible] = useState(false);
+   const [draggingItem, setDraggingItem] = useState<any>(null);
 
    useEffect(() => {
       setIsClient(true);
@@ -91,7 +93,7 @@ export default function Home() {
 
    const handleProfileVisible = () => {
       setIsProfileVisible(!isProfileVisible);
-   }
+   };
 
    const filteredTasks = tasks.filter((task) => {
       return (
@@ -100,20 +102,57 @@ export default function Home() {
       );
    });
 
+   // Garantir que todos os hooks sejam chamados antes da renderização condicional
    if (!isClient || isLoading || !userId) {
       return <LoadingPage />;
    }
 
+   const handleDragStart = (e: React.DragEvent, taskId: string) => {
+      setDraggingItem(taskId);
+      e.dataTransfer.setData("text/plain", taskId);
+   };
+
+   const handleDrop = (e: React.DragEvent, targetTaskId: string) => {
+      e.preventDefault();
+      const draggedTaskId = draggingItem;
+
+      if (!draggedTaskId || draggedTaskId === targetTaskId) return;
+
+      const draggedIndex = tasks.findIndex((t) => t.id === draggedTaskId);
+      const targetIndex = tasks.findIndex((t) => t.id === targetTaskId);
+
+      if (draggedIndex !== -1 && targetIndex !== -1) {
+         const updatedTasks = [...tasks];
+         const [removedTask] = updatedTasks.splice(draggedIndex, 1);
+         updatedTasks.splice(targetIndex, 0, removedTask);
+         setTasks(updatedTasks);
+      }
+
+      setDraggingItem(null);
+   };
+
    return (
       <div className="min-h-screen bg-gray-900">
-         <Header setSearch={handleSearch} search={search} profile={handleProfileVisible} />
+         <Header
+            setSearch={handleSearch}
+            search={search}
+            profile={handleProfileVisible}
+         />
          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-8 py-8">
             {filteredTasks.map((task) => (
-               <Task key={task.id} task={task} onTaskDeleted={fetchTasks} />
+               <Task
+                  key={task.id}
+                  task={task}
+                  onTaskDeleted={fetchTasks}
+                  dragStart={handleDragStart}
+                  drop={handleDrop}
+               />
             ))}
          </div>
          <CreateTask onTaskCreated={fetchTasks} />
-         {isProfileVisible && <Profile changeVisibility={handleProfileVisible} />}
+         {isProfileVisible && (
+            <Profile changeVisibility={handleProfileVisible} />
+         )}
       </div>
    );
 }

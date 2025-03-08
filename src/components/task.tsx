@@ -1,6 +1,6 @@
 import taskModel from "@/model/taskModel";
 import Status from "@/components/status";
-import { Info, Trash, ArrowDown, Equal, ArrowUp } from "lucide-react";
+import { Info, Trash, ArrowDown, Equal, ArrowUp, Menu } from "lucide-react";
 import { useState } from "react";
 import { Priority } from "@/model/priority";
 import ModalTask from "@/components/modalTask";
@@ -8,6 +8,8 @@ import ModalTask from "@/components/modalTask";
 interface TaskProps {
    task: taskModel;
    onTaskDeleted: () => void;
+   dragStart: (e: React.DragEvent, index: string) => void;
+   drop: (e: React.DragEvent, index: string) => void;
 }
 
 export default function Task(props: TaskProps) {
@@ -75,39 +77,50 @@ export default function Task(props: TaskProps) {
    const priorityStyles = getPriorityStyles(props.task.prioridade);
 
    return (
-      <div className="flex flex-row justify-between items-center p-4 bg-gray-800 rounded-lg shadow-md transition-all duration-200 hover:shadow-lg">
-         <div className="flex-1 flex gap-2 flex-col">
-            <h3 className="text-lg font-semibold text-white mb-1">
-               {props.task.titulo}
-            </h3>
-            <div className="flex items-center gap-2">
-               <Status
-                  taskId={props.task.id}
-                  status={taskStatus}
-                  onStatusChange={handleStatusChange}
-                  textSize="text-xs"
-               />
-               <div
-                  className={`flex items-center gap-1 ${priorityStyles.color}`}
-               >
-                  {priorityStyles.icon}
-                  <span className="text-xs">{priorityStyles.label}</span>
+      <>
+         <div
+            className="relative flex flex-row justify-between items-center p-4 bg-gray-800 rounded-lg shadow-md transition-all duration-200 hover:shadow-lg"
+            draggable
+            onDragStart={(e) => props.dragStart(e, props.task.id)}
+            onDrop={(e) => props.drop(e, props.task.id)}
+            onDragOver={(e) => e.preventDefault()}
+         >
+            <div className="absolute top-1 right-2">
+               <Menu className="text-white w-4" />
+            </div>
+            <div className="flex-1 flex gap-2 flex-col">
+               <h3 className="text-lg font-semibold text-white mb-1">
+                  {props.task.titulo}
+               </h3>
+               <div className="flex items-center gap-2">
+                  <Status
+                     taskId={props.task.id}
+                     status={taskStatus}
+                     onStatusChange={handleStatusChange}
+                     textSize="text-xs"
+                  />
+                  <div
+                     className={`flex items-center gap-1 ${priorityStyles.color}`}
+                  >
+                     {priorityStyles.icon}
+                     <span className="text-xs">{priorityStyles.label}</span>
+                  </div>
                </div>
             </div>
-         </div>
-         <div className="flex gap-2">
-            <button
-               className="mt-2 bg-blue-400 hover:bg-blue-500 w-8 h-8 flex justify-center items-center rounded-full transition-all duration-200"
-               onClick={handleShowModal}
-            >
-               <Info className="text-black w-5 h-5" />
-            </button>
-            <button
-               onClick={handleDeleteTask}
-               className="mt-2 bg-red-500 hover:bg-red-600 w-8 h-8 flex justify-center items-center rounded-full transition-all duration-200"
-            >
-               <Trash className="text-white w-4 h-4" />
-            </button>
+            <div className="flex gap-2">
+               <button
+                  className="mt-2 bg-blue-400 hover:bg-blue-500 w-8 h-8 flex justify-center items-center rounded-full transition-all duration-200"
+                  onClick={handleShowModal}
+               >
+                  <Info className="text-black w-5 h-5" />
+               </button>
+               <button
+                  onClick={handleDeleteTask}
+                  className="mt-2 bg-red-500 hover:bg-red-600 w-8 h-8 flex justify-center items-center rounded-full transition-all duration-200"
+               >
+                  <Trash className="text-white w-4 h-4" />
+               </button>
+            </div>
          </div>
          {isModalVisible && (
             <ModalTask
@@ -119,6 +132,6 @@ export default function Task(props: TaskProps) {
                closeModal={handleShowModal}
             />
          )}
-      </div>
+      </>
    );
 }

@@ -1,30 +1,33 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import Alert from "@/components/alert";
+import { useForm } from "react-hook-form";
 
-type AlertType = "success" | "error" | "warning" | "info";
+interface UsuarioSchema {
+   email: string;
+   senha: string;
+}
 
 export default function Login() {
-   const [email, setEmail] = useState("");
-   const [password, setPassword] = useState("");
    const [showAlert, setShowAlert] = useState(false);
-   const [alertType, setAlertType] = useState<AlertType>("success");
+   const [alertType, setAlertType] = useState<
+      "success" | "error" | "warning" | "info"
+   >("success");
    const [alertMessage, setAlertMessage] = useState("");
-
    const router = useRouter();
 
-   const handleLogin = async (e: Event) => {
-      e.preventDefault();
+   // Inicia o react-hook-form
+   const {
+      register,
+      handleSubmit,
+      formState: { errors },
+   } = useForm<UsuarioSchema>();
 
-      if (email.trim() === "" || password.trim() === "") {
-         setAlertType("error");
-         setAlertMessage("Preencha todos os campos.");
-         setShowAlert(true);
-         return;
-      }
+   // Função de login
+   const handleLogin = async (data: UsuarioSchema) => {
+      console.log("Formulário enviado com os seguintes dados:", data); // Adicionei o log para depuração
 
       try {
          const response = await fetch("http://localhost:8086/user/login", {
@@ -33,8 +36,8 @@ export default function Login() {
                "Content-Type": "application/json",
             },
             body: JSON.stringify({
-               email: email,
-               senha: password,
+               email: data.email,
+               senha: data.senha,
             }),
          });
 
@@ -45,8 +48,8 @@ export default function Login() {
             throw new Error("Credenciais inválidas");
          }
 
-         const data = await response.json();
-         const userId = data.userId;
+         const dataResponse = await response.json();
+         const userId = dataResponse.userId;
 
          if (userId) {
             Cookies.set("user_id", userId);
@@ -61,49 +64,41 @@ export default function Login() {
       }
    };
 
-   useEffect(() => {
-      const loginButton = document.getElementById("loginButton");
-
-      if (loginButton) {
-         loginButton.addEventListener("click", handleLogin as EventListener);
-
-         return () => {
-            loginButton.removeEventListener(
-               "click",
-               handleLogin as EventListener
-            );
-         };
-      }
-   }, [handleLogin]);
-
    return (
       <div className="flex justify-center items-center h-screen bg-gray-900">
          <div className="bg-gray-800 p-8 rounded-lg shadow-md w-96">
-            <form className="space-y-4">
-               <input
-                  type="email"
-                  placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full p-2 border border-gray-700 rounded bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-               />
-               <input
-                  type="password"
-                  placeholder="Senha"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full p-2 border border-gray-700 rounded bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-               />
-               {showAlert && (
-                  <Alert
-                     type={alertType}
-                     message={alertMessage}
-                     onClose={() => setShowAlert(false)}
+            <form className="space-y-4" onSubmit={handleSubmit(handleLogin)}>
+               <div>
+                  <input
+                     type="email"
+                     placeholder="Email"
+                     {...register("email", { required: "Email é obrigatório" })}
+                     className="w-full p-2 border border-gray-700 rounded bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
+                  {errors.email && (
+                     <p className="text-red-500 text-sm">
+                        {errors.email.message}
+                     </p>
+                  )}
+               </div>
+               <div>
+                  <input
+                     type="password"
+                     placeholder="Senha"
+                     {...register("senha", { required: "Senha é obrigatória" })}
+                     className="w-full p-2 border border-gray-700 rounded bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  {errors.senha && (
+                     <p className="text-red-500 text-sm">
+                        {errors.senha.message}
+                     </p>
+                  )}
+               </div>
+               {showAlert && (
+                  <div className={`alert ${alertType}`}>{alertMessage}</div>
                )}
                <button
-                  id="loginButton"
-                  type="button"
+                  type="submit"
                   className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300"
                >
                   Entrar
